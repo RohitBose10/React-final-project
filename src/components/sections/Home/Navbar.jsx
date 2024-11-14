@@ -16,7 +16,7 @@ import {
   Menu as MenuIcon,
   ShoppingCart as ShoppingCartIcon,
 } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function Navbar() {
@@ -27,6 +27,7 @@ function Navbar() {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const location = useLocation(); // Get the current path
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -52,7 +53,6 @@ function Navbar() {
           color="inherit"
           sx={{
             fontSize: isSmallScreen ? 16 : 18,
-           
             textTransform: "none",
           }}
         >
@@ -67,7 +67,6 @@ function Navbar() {
             color: "#FAFAFA",
             textTransform: "none",
             borderRadius: 2,
-            
             fontSize: isSmallScreen ? 16 : 16,
             "&:hover": { bgcolor: "#E50914" },
           }}
@@ -104,7 +103,7 @@ function Navbar() {
             display: { xs: "none", sm: "flex" },
             gap: 2,
             alignItems: "center",
-            marginRight: isSmallScreen ? 0 : 5, 
+            marginRight: isSmallScreen ? 0 : 5,
           }}
         >
           {menuItems.map((item, index) => (
@@ -118,6 +117,17 @@ function Navbar() {
                 sx={{
                   fontSize: isSmallScreen ? 14 : isTablet ? 16 : 18,
                   textTransform: "none",
+                  position: "relative",
+                  "&::before": {
+                    content: '""',
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    height: "2px",
+                    width: location.pathname === item.link ? "100%" : "0",
+                    backgroundColor: "#e50914",
+                    transition: "width 0.4s ease-in-out",
+                  },
                 }}
               >
                 {item.text}
@@ -172,7 +182,16 @@ function Navbar() {
             >
               <List>
                 {menuItems.map((item, index) => (
-                  <ListItem button component={Link} to={item.link} key={index}>
+                  <ListItem
+                    button
+                    component={Link}
+                    to={item.link}
+                    key={index}
+                    sx={{
+                      backgroundColor:
+                        location.pathname === item.link ? "#e50914" : "inherit",
+                    }}
+                  >
                     <ListItemText primary={item.text} />
                   </ListItem>
                 ))}

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { postContactQuery } from "../../redux/slice/queryslice";
+import SendIcon from "@mui/icons-material/Send";
 
 const SupportPage = () => {
   const navigate = useNavigate();
@@ -378,6 +379,7 @@ const SupportPage = () => {
               />
               <Button
                 variant="contained"
+                endIcon={<SendIcon />}
                 sx={{
                   mt: 1,
                   background: "linear-gradient(135deg, #0096c7, #005f73)",

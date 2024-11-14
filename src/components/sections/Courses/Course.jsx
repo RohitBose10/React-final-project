@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -15,7 +15,12 @@ import {
   Typography,
   TextField,
   Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 const CoursesPage = () => {
   const { categoryName } = useParams();
@@ -25,6 +30,8 @@ const CoursesPage = () => {
   const searchQuery = useSelector((state) => state.courses.searchQuery);
   const userRole = localStorage.getItem("userRole");
 
+  const [sortOrder, setSortOrder] = useState("A-Z");
+
   useEffect(() => {
     dispatch(fetchCoursesByCategory(categoryName));
   }, [dispatch, categoryName]);
@@ -32,6 +39,7 @@ const CoursesPage = () => {
   const handleCourseClick = (id) => {
     navigate(`/details/${id}`);
   };
+
   const handleNavigateBack = () => {
     navigate("/categories");
   };
@@ -39,6 +47,19 @@ const CoursesPage = () => {
   const handleDeleteCourse = (id) => {
     dispatch(deleteCourse(id));
   };
+
+  const handleSortChange = (e) => {
+    const order = e.target.value;
+    setSortOrder(order);
+  };
+
+  const sortedCourses = [...courses].sort((a, b) => {
+    if (sortOrder === "A-Z") {
+      return a.title.localeCompare(b.title);
+    } else {
+      return b.title.localeCompare(a.title);
+    }
+  });
 
   return (
     <Box
@@ -54,27 +75,85 @@ const CoursesPage = () => {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "center",
+          justifyContent: "space-between",
+          alignItems: "center",
           mb: { xs: 3, md: 4 },
         }}
       >
         <Button
           variant="contained"
           onClick={handleNavigateBack}
+          startIcon={<ChevronLeftIcon />}
           sx={{
             background: "linear-gradient(135deg, #e50914, #b00020)",
             color: "#FFFFFF",
             borderRadius: "25px",
-            padding: "10px 20px",
+            padding: "12px 20px",
             fontSize: { xs: "0.5rem", md: "0.8rem" },
             fontWeight: "bold",
             textTransform: "uppercase",
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
+            "& .MuiButton-startIcon": {
+              marginRight: "4px",
+            },
           }}
         >
           Back to Categories
         </Button>
+
+        <FormControl sx={{ minWidth: 100, width: { xs: "100%", sm: "auto" } }}>
+          <InputLabel
+            sx={{
+              color: "#FFFFFF",
+              "&.Mui-focused": {
+                color: "#e50914",
+              },
+            }}
+          >
+            Sort By
+          </InputLabel>
+          <Select
+            value={sortOrder}
+            onChange={handleSortChange}
+            label="Sort By"
+            displayEmpty
+            sx={{
+              borderRadius: "25px",
+              backgroundColor: "#333333",
+              color: "#FAFAFA",
+              width: { xs: "100%", sm: "200px" },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#555555",
+                borderRadius: "25px",
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#e50914",
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#e50914",
+              },
+              "& .MuiSvgIcon-root": {
+                color: "#FAFAFA",
+              },
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  bgcolor: "#1E1E1E",
+                  color: "#FAFAFA",
+                  "& .MuiMenuItem-root:hover": {
+                    color: "#FFFFFF",
+                  },
+                },
+              },
+            }}
+          >
+            <MenuItem value="A-Z">a-z</MenuItem>
+            <MenuItem value="Z-A">z-a</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
+
       <Typography
         variant="h4"
         gutterBottom
@@ -90,20 +169,6 @@ const CoursesPage = () => {
         }}
       >
         {categoryName} Courses
-      </Typography>
-      <Typography
-        variant="h6"
-        textAlign="center"
-        color="#e50914"
-        sx={{
-          fontSize: { xs: "1rem", md: "1.2rem" },
-          fontStyle: "italic",
-          letterSpacing: "0.5px",
-          mb: { xs: 4, md: 6 },
-        }}
-      >
-        "Explore {categoryName} courses to match your interests and build skills
-        with expert guidance."
       </Typography>
 
       <Box
@@ -155,8 +220,8 @@ const CoursesPage = () => {
           gap: "20px",
         }}
       >
-        {courses.length > 0 ? (
-          courses.map((course) => (
+        {sortedCourses.length > 0 ? (
+          sortedCourses.map((course) => (
             <Card
               key={course.id}
               onClick={() => handleCourseClick(course.id)}
@@ -188,7 +253,7 @@ const CoursesPage = () => {
                 sx={{
                   backgroundColor: "#1E1E1E",
                   color: "#fff",
-                  flexGrow: 1, // Allow this section to grow and take up remaining space
+                  flexGrow: 1,
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
@@ -231,13 +296,12 @@ const CoursesPage = () => {
                   </Typography>
                 </Box>
 
-                {/* Conditionally render Delete button at the bottom */}
                 {userRole === "admin" && (
                   <Button
                     variant="contained"
                     color="error"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent card click
+                      e.stopPropagation();
                       handleDeleteCourse(course.id);
                     }}
                     sx={{
@@ -246,7 +310,7 @@ const CoursesPage = () => {
                       background: "linear-gradient(135deg, #e50914, #b00020)",
                       mt: 2,
                       padding: "10px 100px",
-                      alignSelf: "center", // Align the button to the bottom
+                      alignSelf: "center",
                     }}
                   >
                     Delete
@@ -256,16 +320,8 @@ const CoursesPage = () => {
             </Card>
           ))
         ) : (
-          <Typography
-            sx={{
-              textAlign: "center",
-              color: "#777",
-              fontSize: { xs: "1rem", md: "1.2rem" },
-              mt: "20px",
-              fontStyle: "italic",
-            }}
-          >
-            No courses available for this category.
+          <Typography variant="h6" color="text.secondary" align="center">
+            No courses found in this category.
           </Typography>
         )}
       </Box>

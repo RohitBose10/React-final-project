@@ -3,12 +3,12 @@ import { Card, CardContent, Typography, Button, Box } from "@mui/material";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addCourseToCart } from "../../redux/slice/cartSlice";
-
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 
 const DetailPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const course = useSelector((state) =>
     state.courses.courses.find((course) => course.id === id)
   );
@@ -19,14 +19,13 @@ const DetailPage = () => {
   if (!course) {
     return <Typography variant="h5">Course not found</Typography>;
   }
-  const userRole = localStorage.getItem("userRole"); 
+  const userRole = localStorage.getItem("userRole");
   const handleAddToCart = () => {
     dispatch(addCourseToCart(course));
   };
   const handleNavigateBack = () => {
     navigate(`/courses/${course.category_name}`);
   };
-  
 
   return (
     <Box
@@ -41,7 +40,7 @@ const DetailPage = () => {
         px: { xs: 2, md: 0 },
       }}
     >
-       <Box
+      <Box
         sx={{
           display: "flex",
           justifyContent: "center",
@@ -51,11 +50,12 @@ const DetailPage = () => {
         <Button
           variant="contained"
           onClick={handleNavigateBack}
+          startIcon={<ChevronLeftIcon />}
           sx={{
             background: "linear-gradient(135deg, #e50914, #b00020)",
             color: "#FFFFFF",
             borderRadius: "25px",
-            padding: "10px 20px",
+            padding: "12px 20px",
             fontSize: { xs: "0.5rem", md: "0.8rem" },
             fontWeight: "bold",
             textTransform: "uppercase",
@@ -154,9 +154,8 @@ const DetailPage = () => {
               sx={{
                 display: "flex",
                 gap: 2,
-                position: "absolute",
-                bottom: { xs: "1rem", md: "2rem" },
-                flexDirection: { xs: "column", sm: "row" },
+                mt: 5,
+                flexDirection: { xs: "row", sm: "row" },
               }}
             >
               {userRole === "admin" && (
