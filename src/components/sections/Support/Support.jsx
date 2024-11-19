@@ -29,9 +29,6 @@ const SupportPage = () => {
         text: "Please fill out all fields before submitting.",
         icon: "warning",
         confirmButtonText: "Okay",
-        confirmButtonColor: "#d33",
-        background: "#fff3cd",
-        color: "#856404",
         padding: "20px",
       });
       return;
@@ -43,9 +40,6 @@ const SupportPage = () => {
         text: "Please provide a valid email address.",
         icon: "error",
         confirmButtonText: "Try Again",
-        confirmButtonColor: "#d33",
-        background: "#f8d7da", // Customize background color
-        color: "#721c24", // Text color
         padding: "20px", // Padding for alert
       });
       return;
@@ -59,9 +53,7 @@ const SupportPage = () => {
       text: "Your query has been submitted.",
       icon: "success",
       confirmButtonText: "Great!",
-      confirmButtonColor: "#28a745", // Green success color
-      background: "#d4edda", // Customize background color
-      color: "#155724", // Text color
+
       padding: "20px", // Padding for alert
     });
   };

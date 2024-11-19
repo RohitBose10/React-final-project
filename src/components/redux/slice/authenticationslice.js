@@ -29,7 +29,13 @@ export const register = createAsyncThunk(
         );
       }
 
-      const { data } = await axios.post(api, newUser);
+      const userWithDefaultRole = {
+        ...newUser,
+        role: newUser.role || "user",
+      };
+
+      const { data } = await axios.post(api, userWithDefaultRole);
+
       return data;
     } catch (error) {
       return rejectWithValue("Registration failed.");
@@ -78,7 +84,15 @@ export const updateProfile = createAsyncThunk(
   async (updatedData, { rejectWithValue }) => {
     try {
       const userId = localStorage.getItem("userId");
-      const { data } = await axios.put(`${api}${userId}/`, updatedData);
+
+      const { data: existingUserData } = await axios.get(`${api}${userId}/`);
+
+      const mergedData = {
+        ...existingUserData,
+        ...updatedData,
+      };
+
+      const { data } = await axios.put(`${api}${userId}/`, mergedData);
       return data;
     } catch (error) {
       return rejectWithValue("Failed to update profile.");
