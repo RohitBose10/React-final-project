@@ -55,15 +55,16 @@ const ReviewComponent = () => {
   };
 
   const handleSubmit = () => {
-    if (newReview && name) {
-      // Dispatching the review submission
-      dispatch(postReview({ name, content: newReview, profilePic }));
-
+    if (newReview && name && rating) {  // Ensure rating is also present
+      // Dispatching the review submission with rating
+      dispatch(postReview({ name, content: newReview, profilePic, rating }));
+  
       // Clearing the form fields
       setNewReview("");
       setName("");
       setProfilePic(null);
-
+      setRating(0);  // Reset rating to 0 after submission
+  
       // Show success SweetAlert
       Swal.fire({
         icon: "success",
@@ -83,6 +84,7 @@ const ReviewComponent = () => {
       });
     }
   };
+  
 
   return (
     <Box
