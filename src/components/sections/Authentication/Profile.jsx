@@ -83,16 +83,41 @@ const Profile = () => {
   };
 
   // Handle form input changes
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditableProfileData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    if (name === "mobile") {
+      // Allow only numeric values
+      if (/^\d*$/.test(value)) {
+        setEditableProfileData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
+      }
+    } else {
+      setEditableProfileData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
-  // Save changes to the profile
+  // Save changes to the profile// Save changes to the profile with email validation
   const handleSave = () => {
+    if (
+      !editableProfileData.email ||
+      !editableProfileData.email.includes("@")
+    ) {
+      Swal.fire({
+        title: "Invalid Email",
+        text: "Please provide a valid email address.",
+        icon: "error",
+        confirmButtonColor: "#d90429",
+      });
+      return;
+    }
+
     const updatedData = {
       userId,
       ...editableProfileData,
@@ -110,7 +135,15 @@ const Profile = () => {
         setProfileData(editableProfileData);
         setDrawerOpen(false);
       })
-      .catch((err) => console.error("Profile update error:", err));
+      .catch((err) => {
+        console.error("Profile update error:", err);
+        Swal.fire({
+          title: "Update Failed",
+          text: "Something went wrong while updating your profile.",
+          icon: "error",
+          confirmButtonColor: "#d90429",
+        });
+      });
   };
 
   return (

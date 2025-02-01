@@ -21,7 +21,12 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state) => state.auth);
-  const { register: registerField, handleSubmit, watch, formState: { errors } } = useForm();
+  const {
+    register: registerField,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
   const [profileImage, setProfileImage] = useState(null);
   const [country, setCountry] = useState("");
 
@@ -39,9 +44,11 @@ const Register = () => {
   const onSubmit = (data) => {
     const formData = {
       ...data,
+      role: "user",
+      country, // Default role
       profileImage,
-      country,
-      role: "user", // Default role
+    
+     
     };
     dispatch(register(formData)).then((result) => {
       if (result.meta.requestStatus === "fulfilled") {
@@ -215,11 +222,19 @@ const Register = () => {
               }}
             />
             <TextField
-              {...registerField("mobile")}
+              {...registerField("mobile", {
+                required: "Mobile number is required",
+                pattern: {
+                  value: /^[0-9]*$/,
+                  message: "Only numbers are allowed for the mobile number",
+                },
+              })}
               label="Mobile Number"
               fullWidth
               margin="normal"
               required
+              error={!!errors.mobile}
+              helperText={errors.mobile?.message}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
@@ -227,6 +242,7 @@ const Register = () => {
                 },
               }}
             />
+
             <TextField
               {...registerField("dob")}
               label="Date of Birth"
@@ -307,7 +323,10 @@ const Register = () => {
             sx={{ fontSize: "16px" }}
           >
             Already have an account?{" "}
-            <Link to="/login" style={{ textDecoration: "none", color: "#e50914" }}>
+            <Link
+              to="/login"
+              style={{ textDecoration: "none", color: "#e50914" }}
+            >
               Sign in
             </Link>
           </Typography>

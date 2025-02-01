@@ -80,6 +80,7 @@ const EditCourse = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await dispatch(updateCourse({ id, updatedCourseData: formData }));
+
     navigate(`/courses/${formData.category_name}`);
   };
 
