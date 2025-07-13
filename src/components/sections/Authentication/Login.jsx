@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { Container, TextField, Button, Typography, Box } from "@mui/material";
@@ -16,7 +17,12 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      navigate("/");
+    }
+  }, [navigate]);
   const onSubmit = (data) => {
     dispatch(login(data)).then((result) => {
       const { id } = result.payload;

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 import Swal from "sweetalert2";
 import {
   TextField,
@@ -30,6 +31,12 @@ const Register = () => {
   const [profileImage, setProfileImage] = useState(null);
   const [country, setCountry] = useState("");
 
+   useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      navigate("/");
+    }
+  }, [navigate]);
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
